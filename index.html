@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GoldenWeb – ROI & Pain Rechner</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold-light: #E2C990;
+    --gold-mid:   #C8A96E;
+    --gold-dark:  #A07840;
+    --gold-deep:  #7A5A2A;
+    --bg:         #0E0E0E;
+    --bg2:        #161616;
+    --bg3:        #1F1F1F;
+    --bg4:        #2A2A2A;
+    --border:     rgba(200,169,110,0.18);
+    --border2:    rgba(200,169,110,0.35);
+    --text:       #F0EAD8;
+    --text2:      #A89880;
+    --text3:      #6E6050;
+    --red:        #E05252;
+    --red-bg:     rgba(224,82,82,0.10);
+    --red-border: rgba(224,82,82,0.30);
+    --green:      #5EC47A;
+    --green-bg:   rgba(94,196,122,0.10);
+    --green-border:rgba(94,196,122,0.28);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0 0 60px;
+  }
+
+  /* ── HEADER ── */
+  header {
+    padding: 28px 40px 24px;
+    border-bottom: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--bg);
+  }
+  .logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .logo-icon {
+    width: 36px;
+    height: 36px;
+  }
+  .logo-text {
+    font-size: 22px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold-mid) 50%, var(--gold-dark) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: -0.02em;
+  }
+  .header-badge {
+    font-size: 12px;
+    color: var(--text2);
+    padding: 5px 12px;
+    border: 0.5px solid var(--border);
+    border-radius: 20px;
+  }
+
+  /* ── MAIN CONTAINER ── */
+  .container {
+    max-width: 780px;
+    margin: 40px auto;
+    padding: 0 24px;
+  }
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .page-sub {
+    font-size: 14px;
+    color: var(--text2);
+    margin-bottom: 32px;
+    line-height: 1.6;
+  }
+
+  /* ── TABS ── */
+  .tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 28px;
+  }
+  .tab {
+    flex: 1;
+    padding: 12px 0;
+    border: 0.5px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Cairo', sans-serif;
+    background: var(--bg2);
+    color: var(--text2);
+    text-align: center;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+  }
+  .tab:hover { background: var(--bg3); color: var(--text); border-color: var(--border2); }
+  .tab.active {
+    background: linear-gradient(135deg, rgba(226,201,144,0.12), rgba(160,120,64,0.12));
+    color: var(--gold-mid);
+    border-color: var(--gold-dark);
+  }
+  .tab svg { width: 17px; height: 17px; flex-shrink: 0; }
+
+  /* ── SECTION LABEL ── */
+  .sec-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text3);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 14px;
+  }
+
+  /* ── INPUT GRID ── */
+  .input-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .input-block {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .input-label {
+    font-size: 13px;
+    color: var(--text2);
+    line-height: 1.4;
+  }
+  .input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  input[type=range] {
+    -webkit-appearance: none;
+    flex: 1;
+    height: 4px;
+    background: var(--bg4);
+    border-radius: 2px;
+    outline: none;
+    cursor: pointer;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    cursor: pointer;
+    border: 0;
+  }
+  input[type=range]::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    border: 0;
+    cursor: pointer;
+  }
+  .val-badge {
+    font-size: 14px;
+    font-weight: 600;
+    min-width: 68px;
+    text-align: right;
+    color: var(--gold-mid);
+  }
+
+  /* ── HIGHLIGHT SLIDER ── */
+  .hl-slider {
+    background: var(--green-bg);
+    border: 0.5px solid var(--green-border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+  }
+  .hl-slider .input-label { color: var(--green); font-weight: 600; }
+  .hl-slider .val-badge { color: var(--green); }
+  .hl-slider input[type=range]::-webkit-slider-thumb { background: var(--green); }
+  .hl-slider input[type=range]::-moz-range-thumb { background: var(--green); }
+
+  /* ── PAIN PANEL ── */
+  .panel {
+    border: 0.5px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+    margin-bottom: 14px;
+  }
+  .panel-header {
+    padding: 11px 16px;
+    background: var(--bg2);
+    border-bottom: 0.5px solid var(--border);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .panel-header svg { width: 15px; height: 15px; vertical-align: -2px; margin-right: 6px; }
+  .time-toggle { display: flex; gap: 4px; }
+  .t-btn {
+    padding: 3px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    font-family: 'Cairo', sans-serif;
+    border: 0.5px solid var(--border);
+    background: none;
+    cursor: pointer;
+    color: var(--text2);
+    transition: all 0.15s;
+  }
+  .t-btn.active { background: var(--bg4); color: var(--gold-mid); border-color: var(--gold-dark); }
+
+  /* ── NUMBERS ROW ── */
+  .numbers-row { display: grid; grid-template-columns: repeat(3, 1fr); }
+  .num-cell {
+    padding: 16px;
+    border-right: 0.5px solid var(--border);
+  }
+  .num-cell:last-child { border-right: none; }
+  .num-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .num-val {
+    font-size: 21px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    transition: all 0.25s;
+  }
+  .v-red { color: var(--red); }
+  .v-green { color: var(--green); }
+  .v-gold { color: var(--gold-mid); }
+
+  /* ── ROI PANEL ── */
+  .roi-body {
+    padding: 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .roi-card {
+    background: var(--bg3);
+    border-radius: 8px;
+    padding: 12px 14px;
+    border: 0.5px solid var(--border);
+  }
+  .roi-card-label { font-size: 12px; color: var(--text3); margin-bottom: 6px; }
+  .roi-card-val { font-size: 20px; font-weight: 700; }
+  .roi-bar-wrap { padding: 0 16px 16px; }
+  .roi-bar-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: var(--text2);
+    margin-bottom: 7px;
+  }
+  .roi-bar-track {
+    height: 6px;
+    background: var(--bg4);
+    border-radius: 3px;
+    overflow: hidden;
+  }
+  .roi-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold-dark), var(--gold-light));
+    border-radius: 3px;
+    transition: width 0.35s ease;
+  }
+
+  /* ── INSIGHT BOX ── */
+  .insight {
+    padding: 14px 16px;
+    border-radius: 10px;
+    margin-bottom: 14px;
+    font-size: 13px;
+    line-height: 1.7;
+  }
+  .insight.red  { background: var(--red-bg);   border: 0.5px solid var(--red-border);   color: #f08080; }
+  .insight.green{ background: var(--green-bg); border: 0.5px solid var(--green-border); color: #7ed89a; }
+  .insight strong { font-weight: 700; }
+
+  /* ── TAGS ── */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+  .tag {
+    font-size: 12px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    color: var(--text2);
+  }
+
+  /* ── FOOTER ── */
+  footer {
+    margin-top: 48px;
+    padding: 24px 40px;
+    border-top: 0.5px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .footer-text { font-size: 12px; color: var(--text3); }
+  .footer-logo {
+    font-size: 14px;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--gold-light), var(--gold-dark));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  @media (max-width: 600px) {
+    header { padding: 20px; }
+    .container { padding: 0 16px; }
+    .input-grid { grid-template-columns: 1fr; }
+    .numbers-row { grid-template-columns: 1fr; }
+    .num-cell { border-right: none; border-bottom: 0.5px solid var(--border); }
+    .num-cell:last-child { border-bottom: none; }
+    .roi-body { grid-template-columns: 1fr; }
+    .tabs { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <svg class="logo-icon" viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="lg" x1="0" y1="0" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+          <stop offset="0%" stop-color="#E2C990"/>
+          <stop offset="50%" stop-color="#C8A96E"/>
+          <stop offset="100%" stop-color="#A07840"/>
+        </linearGradient>
+      </defs>
+      <polygon points="18,3 33,12 33,24 18,33 3,24 3,12" stroke="url(#lg)" stroke-width="2" fill="none"/>
+      <polygon points="18,9 27,14 27,22 18,27 9,22 9,14" fill="url(#lg)" opacity="0.25"/>
+      <circle cx="18" cy="18" r="4" fill="url(#lg)"/>
+    </svg>
+    <span class="logo-text">GoldenWeb</span>
+  </div>
+  <span class="header-badge">ROI &amp; Pain Rechner</span>
+</header>
+
+<div class="container">
+  <h1 class="page-title">Was kostet dich die Stagnation?</h1>
+  <p class="page-sub">Berechne in 60 Sekunden, wie viel Umsatz du gerade liegen lässt – und was sich mit GoldenWeb ändert.</p>
+
+  <div class="tabs">
+    <button class="tab active" id="tab-r" onclick="switchMode('r')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Recruiting / Mitarbeiter
+    </button>
+    <button class="tab" id="tab-w" onclick="switchMode('w')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      Aufträge / Website
+    </button>
+  </div>
+
+  <!-- ───── RECRUITING MODE ───── -->
+  <div id="mode-r">
+    <p class="sec-label">Aktuelle Recruiting-Situation</p>
+    <div class="input-grid">
+      <div class="input-block">
+        <span class="input-label">Offene Stellen aktuell</span>
+        <div class="input-row"><input type="range" id="r-stellen" min="1" max="20" value="3" step="1" oninput="calcR()"><span class="val-badge" id="r-stellen-v">3</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Ø Umsatz pro Mitarbeiter / Jahr (€)</span>
+        <div class="input-row"><input type="range" id="r-umsatz" min="20000" max="500000" value="120000" step="5000" oninput="calcR()"><span class="val-badge" id="r-umsatz-v">120k</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Stelle im Schnitt unbesetzt (Monate)</span>
+        <div class="input-row"><input type="range" id="r-monate" min="1" max="24" value="6" step="1" oninput="calcR()"><span class="val-badge" id="r-monate-v">6</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Aufträge wegen Kapazität abgelehnt (%)</span>
+        <div class="input-row"><input type="range" id="r-ablehnung" min="0" max="80" value="25" step="5" oninput="calcR()"><span class="val-badge" id="r-ablehnung-v">25%</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Ø Auftragswert abgelehnter Jobs (€)</span>
+        <div class="input-row"><input type="range" id="r-auftrags" min="500" max="100000" value="8000" step="500" oninput="calcR()"><span class="val-badge" id="r-auftrags-v">8k</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Abgelehnte Anfragen pro Monat</span>
+        <div class="input-row"><input type="range" id="r-anfragen" min="1" max="50" value="5" step="1" oninput="calcR()"><span class="val-badge" id="r-anfragen-v">5</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+          Entgangener Wert
+        </span>
+        <div class="time-toggle">
+          <button class="t-btn active" id="trm" onclick="setRT('m')">Monat</button>
+          <button class="t-btn" id="try" onclick="setRT('y')">Jahr</button>
+          <button class="t-btn" id="tr3" onclick="setRT('3')">3 Jahre</button>
+        </div>
+      </div>
+      <div class="numbers-row">
+        <div class="num-cell"><div class="num-label">Produktionsausfall</div><div class="num-val v-red" id="r-v1">–</div></div>
+        <div class="num-cell"><div class="num-label">Abgelehnte Aufträge</div><div class="num-val v-red" id="r-v2">–</div></div>
+        <div class="num-cell"><div class="num-label">Gesamtschaden</div><div class="num-val v-red" id="r-v3">–</div></div>
+      </div>
+    </div>
+
+    <div class="insight red" id="r-insight"></div>
+    <div class="tag-row" id="r-tags"></div>
+  </div>
+
+  <!-- ───── WEBSITE / AUFTRÄGE MODE ───── -->
+  <div id="mode-w" style="display:none">
+    <p class="sec-label">Aktuelle Situation des Betriebs</p>
+    <div class="input-grid">
+      <div class="input-block">
+        <span class="input-label">Kunden pro Monat (aktuell)</span>
+        <div class="input-row"><input type="range" id="w-kunden" min="1" max="200" value="20" step="1" oninput="calcW()"><span class="val-badge" id="w-kunden-v">20</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Ø Auftragsvolumen pro Kunde (€)</span>
+        <div class="input-row"><input type="range" id="w-volumen" min="200" max="50000" value="3000" step="100" oninput="calcW()"><span class="val-badge" id="w-volumen-v">3.000 €</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Aktuelle Auslastung (%)</span>
+        <div class="input-row"><input type="range" id="w-auslastung" min="10" max="100" value="75" step="5" oninput="calcW()"><span class="val-badge" id="w-auslastung-v">75%</span></div>
+      </div>
+      <div class="input-block">
+        <span class="input-label">Freie Kapazität für neue Aufträge (%)</span>
+        <div class="input-row"><input type="range" id="w-kapazitaet" min="0" max="80" value="25" step="5" oninput="calcW()"><span class="val-badge" id="w-kapazitaet-v">25%</span></div>
+      </div>
+    </div>
+
+    <div class="hl-slider">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
+        <span class="input-label" style="margin-bottom:0">Zusätzliche Kunden pro Monat durch GoldenWeb</span>
+        <span style="font-size:12px;font-weight:600;color:#5EC47A;background:rgba(94,196,122,0.15);border:0.5px solid rgba(94,196,122,0.35);border-radius:20px;padding:3px 11px;white-space:nowrap;">
+          &#x2713;&nbsp;Ø mind. 3 neue Aufträge/Monat für unsere Kunden
+        </span>
+      </div>
+      <div class="input-row"><input type="range" id="w-neukunden" min="1" max="50" value="5" step="1" oninput="calcW()"><span class="val-badge" id="w-neukunden-v">+5 Kunden</span></div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>
+          Umsatzvergleich
+        </span>
+        <div class="time-toggle">
+          <button class="t-btn active" id="twm" onclick="setWT('m')">Monat</button>
+          <button class="t-btn" id="twy" onclick="setWT('y')">Jahr</button>
+          <button class="t-btn" id="tw3" onclick="setWT('3')">3 Jahre</button>
+        </div>
+      </div>
+      <div class="numbers-row">
+        <div class="num-cell"><div class="num-label">Umsatz heute</div><div class="num-val v-gold" id="w-v1">–</div></div>
+        <div class="num-cell"><div class="num-label">Umsatz mit GoldenWeb</div><div class="num-val v-green" id="w-v2">–</div></div>
+        <div class="num-cell"><div class="num-label">Mehr Umsatz</div><div class="num-val v-green" id="w-v3">–</div></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        ROI-Rechnung – was bleibt wirklich übrig?
+      </div>
+      <div class="roi-body">
+        <div class="roi-card">
+          <div class="roi-card-label">Monatlicher Mehrwert (brutto)</div>
+          <div class="roi-card-val v-green" id="roi-mehr">–</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-card-label">Kosten GoldenWeb / Monat (€)</div>
+          <div class="input-row" style="margin-top:8px">
+            <input type="range" id="w-kosten" min="200" max="5000" value="800" step="100" oninput="calcW()">
+            <span class="val-badge" style="color:var(--red)" id="w-kosten-v">800 €</span>
+          </div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-card-label">Netto-Gewinn pro Monat</div>
+          <div class="roi-card-val" id="roi-netto">–</div>
+        </div>
+        <div class="roi-card">
+          <div class="roi-card-label">Investition amortisiert sich</div>
+          <div class="roi-card-val v-green" id="roi-amort">–</div>
+        </div>
+      </div>
+      <div class="roi-bar-wrap">
+        <div class="roi-bar-label"><span>ROI-Verhältnis</span><span id="roi-ratio">–</span></div>
+        <div class="roi-bar-track"><div class="roi-bar-fill" id="roi-bar" style="width:0%"></div></div>
+      </div>
+    </div>
+
+    <div class="insight green" id="w-insight"></div>
+    <div class="tag-row" id="w-tags"></div>
+  </div>
+
+</div><!-- /container -->
+
+<footer>
+  <span class="footer-text">Alle Berechnungen sind Schätzungen auf Basis der eingegebenen Werte.</span>
+  <span class="footer-logo">GoldenWeb</span>
+</footer>
+
+<script>
+  let rT='m', wT='m';
+
+  function f(n){
+    if(n>=1000000) return (n/1000000).toFixed(1).replace('.',',')+'M';
+    if(n>=1000) return (n%1000===0?Math.round(n/1000):(n/1000).toFixed(1))+'k';
+    return Math.round(n).toLocaleString('de-DE');
+  }
+  function fe(n){ return '€\u202f'+f(n); }
+  function fm(n){ return '-€\u202f'+f(n); }
+  function fp(n){ return '+€\u202f'+f(n); }
+  function mul(v,t){ return t==='m'?v:t==='y'?v*12:v*36; }
+
+  function setRT(t){
+    rT=t;
+    ['m','y','3'].forEach(x=>document.getElementById('tr'+x).classList.toggle('active',x===t));
+    calcR();
+  }
+  function setWT(t){
+    wT=t;
+    ['m','y','3'].forEach(x=>document.getElementById('tw'+x).classList.toggle('active',x===t));
+    calcW();
+  }
+
+  function calcR(){
+    const stellen=+document.getElementById('r-stellen').value;
+    const umsatz=+document.getElementById('r-umsatz').value;
+    const monate=+document.getElementById('r-monate').value;
+    const abl=+document.getElementById('r-ablehnung').value/100;
+    const auftrags=+document.getElementById('r-auftrags').value;
+    const anfragen=+document.getElementById('r-anfragen').value;
+
+    document.getElementById('r-stellen-v').textContent=stellen;
+    document.getElementById('r-umsatz-v').textContent=f(umsatz);
+    document.getElementById('r-monate-v').textContent=monate;
+    document.getElementById('r-ablehnung-v').textContent=Math.round(abl*100)+'%';
+    document.getElementById('r-auftrags-v').textContent=f(auftrags);
+    document.getElementById('r-anfragen-v').textContent=anfragen;
+
+    const prodM=stellen*umsatz/12;
+    const ablM=anfragen*abl*auftrags;
+    const gesM=prodM+ablM;
+
+    document.getElementById('r-v1').textContent=fm(mul(prodM,rT));
+    document.getElementById('r-v2').textContent=fm(mul(ablM,rT));
+    document.getElementById('r-v3').textContent=fm(mul(gesM,rT));
+
+    const suf=rT==='m'?'monatlich':rT==='y'?'pro Jahr':'in 3 Jahren';
+    document.getElementById('r-insight').innerHTML=
+      `<strong>Ihr verliert ${fm(mul(gesM,rT))} ${suf}.</strong> Bei ${stellen} offenen Stelle${stellen>1?'n':''} fehlt die Kapazität – `+
+      `und ${Math.round(abl*100)}\u202f% der Anfragen werden abgesagt. `+
+      `Eine Karriereseite, die wirklich funktioniert, amortisiert sich in wenigen Wochen.`;
+
+    const tags=document.getElementById('r-tags');
+    tags.innerHTML='';
+    [`${stellen} offene Stelle${stellen>1?'n':''}`,`${monate} Monate Vakanz`,`${Math.round(abl*100)}% Ablehnungsrate`,`${fm(gesM)}/Monat`].forEach(t=>{
+      const s=document.createElement('span');s.className='tag';s.textContent=t;tags.appendChild(s);
+    });
+  }
+
+  function calcW(){
+    const kunden=+document.getElementById('w-kunden').value;
+    const volumen=+document.getElementById('w-volumen').value;
+    const ausl=+document.getElementById('w-auslastung').value/100;
+    const kap=+document.getElementById('w-kapazitaet').value/100;
+    const neuk=+document.getElementById('w-neukunden').value;
+    const kosten=+document.getElementById('w-kosten').value;
+
+    document.getElementById('w-kunden-v').textContent=kunden+' Kunden';
+    document.getElementById('w-volumen-v').textContent=volumen.toLocaleString('de-DE')+' €';
+    document.getElementById('w-auslastung-v').textContent=Math.round(ausl*100)+'%';
+    document.getElementById('w-kapazitaet-v').textContent=Math.round(kap*100)+'%';
+    document.getElementById('w-neukunden-v').textContent='+'+neuk+' Kunden';
+    document.getElementById('w-kosten-v').textContent=kosten.toLocaleString('de-DE')+' €';
+
+    const umsatzM=kunden*volumen;
+    const mehrM=neuk*volumen;
+    const neuM=umsatzM+mehrM;
+    const nettoM=mehrM-kosten;
+    const amortWochen=kosten>0?Math.ceil(kosten/mehrM*4.33):0;
+    const roiPct=kosten>0?Math.round(mehrM/kosten*100):0;
+
+    document.getElementById('w-v1').textContent=fe(mul(umsatzM,wT));
+    document.getElementById('w-v2').textContent=fe(mul(neuM,wT));
+    document.getElementById('w-v3').textContent=fp(mul(mehrM,wT));
+
+    document.getElementById('roi-mehr').textContent=fp(mehrM);
+    document.getElementById('roi-netto').textContent=(nettoM>=0?'+':'')+fe(Math.abs(nettoM));
+    document.getElementById('roi-netto').className='roi-card-val '+(nettoM>=0?'v-green':'v-red');
+    document.getElementById('roi-amort').textContent=amortWochen<=1?'sofort':amortWochen<=4?'Woche '+amortWochen:'Monat '+Math.ceil(amortWochen/4.33);
+    document.getElementById('roi-ratio').textContent=roiPct+'% ROI';
+    document.getElementById('roi-bar').style.width=Math.min(100,Math.round(roiPct/5))+'%';
+
+    const suf=wT==='m'?'monatlich':wT==='y'?'pro Jahr':'in 3 Jahren';
+    document.getElementById('w-insight').innerHTML=
+      `<strong>${neuk} neue Kunden bringen ${fp(mul(mehrM,wT))} ${suf}.</strong> `+
+      `Nach Abzug der GoldenWeb-Kosten von ${fe(kosten)}/Monat bleibt ein Netto-Gewinn von `+
+      `<strong>${fe(Math.max(0,nettoM))}/Monat</strong>. Die Investition zahlt sich `+
+      `${amortWochen<=4?'bereits in der ersten Woche':'nach wenigen Wochen'} aus.`;
+
+    const tags=document.getElementById('w-tags');
+    tags.innerHTML='';
+    [`${kunden} Kunden/Monat`,`Ø ${volumen.toLocaleString('de-DE')} € Auftrag`,`+${neuk} Kunden durch uns`,`ROI: ${roiPct}%`].forEach(t=>{
+      const s=document.createElement('span');s.className='tag';s.textContent=t;tags.appendChild(s);
+    });
+  }
+
+  function switchMode(m){
+    document.getElementById('mode-r').style.display=m==='r'?'':'none';
+    document.getElementById('mode-w').style.display=m==='w'?'':'none';
+    document.getElementById('tab-r').classList.toggle('active',m==='r');
+    document.getElementById('tab-w').classList.toggle('active',m==='w');
+  }
+
+  calcR(); calcW();
+</script>
+</body>
+</html>
