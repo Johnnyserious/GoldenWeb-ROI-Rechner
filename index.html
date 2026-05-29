@@ -437,14 +437,14 @@
 
   <!-- ───── WEBSITE / AUFTRÄGE MODE ───── -->
   <div id="mode-w" style="display:none">
-    <p class="sec-label">Aktuelle Situation des Betriebs</p>
+    <p class="sec-label">Aktuelle Unternehmenssituation</p>
     <div class="input-grid">
       <div class="input-block">
         <span class="input-label">Kunden pro Monat (aktuell)</span>
         <div class="input-row"><input type="range" id="w-kunden" min="1" max="200" value="20" step="1" oninput="calcW()"><span class="val-badge" id="w-kunden-v">20</span></div>
       </div>
       <div class="input-block">
-        <span class="input-label">Ø Auftragsvolumen pro Kunde (€)</span>
+        <span class="input-label">Ø Umsatz pro Kunde (€)</span>
         <div class="input-row"><input type="range" id="w-volumen" min="200" max="50000" value="3000" step="100" oninput="calcW()"><span class="val-badge" id="w-volumen-v">3.000 €</span></div>
       </div>
       <div class="input-block">
@@ -452,7 +452,7 @@
         <div class="input-row"><input type="range" id="w-auslastung" min="10" max="100" value="75" step="5" oninput="calcW()"><span class="val-badge" id="w-auslastung-v">75%</span></div>
       </div>
       <div class="input-block">
-        <span class="input-label">Freie Kapazität für neue Aufträge (%)</span>
+        <span class="input-label">Freie Kapazität für neue Kunden (%)</span>
         <div class="input-row"><input type="range" id="w-kapazitaet" min="0" max="80" value="25" step="5" oninput="calcW()"><span class="val-badge" id="w-kapazitaet-v">25%</span></div>
       </div>
     </div>
@@ -461,7 +461,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:10px">
         <span class="input-label" style="margin-bottom:0">Zusätzliche Kunden pro Monat durch GoldenWeb</span>
         <span style="font-size:12px;font-weight:600;color:#5EC47A;background:rgba(94,196,122,0.15);border:0.5px solid rgba(94,196,122,0.35);border-radius:20px;padding:3px 11px;white-space:nowrap;">
-          &#x2713;&nbsp;Ø mind. 3 neue Aufträge/Monat für unsere Kunden
+          &#x2713;&nbsp;Ø mind. 3 neue Kunden/Monat für unsere Kunden
         </span>
       </div>
       <div class="input-row"><input type="range" id="w-neukunden" min="1" max="50" value="5" step="1" oninput="calcW()"><span class="val-badge" id="w-neukunden-v">+5 Kunden</span></div>
@@ -545,25 +545,31 @@
       </div>
     </div>
 
-    <div style="border:0.5px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:14px">
-      <div style="padding:12px 16px;background:var(--bg2);border-bottom:0.5px solid var(--border);font-size:13px;font-weight:600;color:var(--text2)">
-        Was GoldenWeb dir bringt
+    <!-- RESULTS PANEL -->
+    <div style="border:1.5px solid rgba(200,169,110,0.45);border-radius:14px;overflow:hidden;margin-bottom:14px;background:linear-gradient(160deg,rgba(226,201,144,0.07) 0%,rgba(160,120,64,0.04) 100%)">
+      <div style="padding:14px 20px;background:linear-gradient(90deg,rgba(200,169,110,0.15),rgba(160,120,64,0.08));border-bottom:0.5px solid rgba(200,169,110,0.25);display:flex;align-items:center;gap:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#C8A96E" stroke-width="1.8" style="width:16px;height:16px;flex-shrink:0"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+        <span style="font-size:13px;font-weight:600;background:linear-gradient(90deg,#E2C990,#A07840);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">Wie sich eine Zusammenarbeit mit uns auszahlt</span>
       </div>
-      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;border-bottom:0.5px solid var(--border)">
-        <div style="padding:20px 16px;border-right:0.5px solid var(--border)">
-          <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Mehr Umsatz / Monat</div>
-          <div style="font-size:28px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums" id="res-mehr-m">–</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr">
+        <div style="padding:24px 20px;border-right:0.5px solid rgba(200,169,110,0.2);text-align:center">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">pro Monat</div>
+          <div style="font-size:34px;font-weight:700;color:#5EC47A;font-variant-numeric:tabular-nums;line-height:1" id="res-mehr-m">–</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">mehr Umsatz</div>
         </div>
-        <div style="padding:20px 16px;border-right:0.5px solid var(--border)">
-          <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Mehr Umsatz / Jahr</div>
-          <div style="font-size:28px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums" id="res-mehr-y">–</div>
+        <div style="padding:24px 20px;border-right:0.5px solid rgba(200,169,110,0.2);text-align:center">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">pro Jahr</div>
+          <div style="font-size:34px;font-weight:700;color:#5EC47A;font-variant-numeric:tabular-nums;line-height:1" id="res-mehr-y">–</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">mehr Umsatz</div>
         </div>
-        <div style="padding:20px 16px">
-          <div style="font-size:12px;color:var(--text3);margin-bottom:8px">Mehr Umsatz / 3 Jahre</div>
-          <div style="font-size:28px;font-weight:700;color:var(--green);font-variant-numeric:tabular-nums" id="res-mehr-3">–</div>
+        <div style="padding:24px 20px;text-align:center">
+          <div style="font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:0.08em;margin-bottom:10px">über 3 Jahre</div>
+          <div style="font-size:34px;font-weight:700;color:#5EC47A;font-variant-numeric:tabular-nums;line-height:1" id="res-mehr-3">–</div>
+          <div style="font-size:11px;color:var(--text3);margin-top:6px">mehr Umsatz</div>
         </div>
       </div>
-      <div style="padding:16px;font-size:13px;line-height:1.75;color:var(--text2)" id="w-insight"></div>
+      <div style="padding:0 20px 20px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap" id="res-badges"></div>
+      <div style="margin:0 20px 20px;padding:14px 16px;background:rgba(94,196,122,0.08);border:0.5px solid rgba(94,196,122,0.25);border-radius:10px;font-size:13px;line-height:1.75;color:var(--text2)" id="w-insight"></div>
     </div>
     <div class="tag-row" id="w-tags"></div>
   </div>
@@ -702,16 +708,28 @@
     document.getElementById('res-mehr-y').textContent = fp(mehrM*12);
     document.getElementById('res-mehr-3').textContent = fp(mehrM*36);
 
+    const badges = document.getElementById('res-badges');
+    badges.innerHTML='';
+    [
+      `${neuk} neue Kunden/Monat`,
+      `ROI Jahr 1: ${roiJ1}%`,
+      `Amortisation: ${amortText}`
+    ].forEach(t=>{
+      const s=document.createElement('span');
+      s.style.cssText='font-size:12px;padding:4px 12px;border-radius:20px;background:rgba(94,196,122,0.1);border:0.5px solid rgba(94,196,122,0.3);color:#7ed89a';
+      s.textContent=t; badges.appendChild(s);
+    });
+
     const invDesc = costType==='fixum'
-      ? `Einmalige Investition von ${fe(einmalig)}`
+      ? `einer einmaligen Investition von ${fe(einmalig)}`
       : costType==='retainer'
-      ? `Monatlicher Retainer von ${fe(monatlich)}`
-      : `Einmalige Investition von ${fe(einmalig)} sowie ein monatlicher Retainer von ${fe(monatlich)}`;
+      ? `einem monatlichen Retainer von ${fe(monatlich)}`
+      : `einer einmaligen Investition von ${fe(einmalig)} sowie einem monatlichen Retainer von ${fe(monatlich)}`;
 
     document.getElementById('w-insight').innerHTML =
       `<strong>${neuk} neue Kunden pro Monat bedeuten ${fp(mehrM*12)} mehr Umsatz im ersten Jahr.</strong> `+
-      `${invDesc} – die Gesamtinvestition im ersten Jahr beträgt ${fe(kostenJ1)}. `+
-      `Ab <strong>${amortText}</strong> hat sich die Investition vollständig amortisiert.`;
+      `Bei ${invDesc} beträgt die Gesamtinvestition im ersten Jahr ${fe(kostenJ1)}. `+
+      `Ab <strong>${amortText}</strong> hat sich die Investition vollständig amortisiert – alles danach ist reiner Gewinn.`;
 
     const tags = document.getElementById('w-tags');
     tags.innerHTML='';
