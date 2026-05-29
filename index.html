@@ -491,20 +491,47 @@
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" style="width:15px;height:15px;vertical-align:-2px;margin-right:6px"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
         ROI-Rechnung – was bleibt wirklich übrig?
       </div>
+
+      <!-- Cost type toggle -->
+      <div style="padding:14px 16px 0;display:flex;gap:8px">
+        <button class="t-btn active" id="ct-fixum"   onclick="setCostType('fixum')"   style="flex:1;padding:7px 0;font-size:13px">🖥 Fixum (Website)</button>
+        <button class="t-btn"        id="ct-retainer" onclick="setCostType('retainer')" style="flex:1;padding:7px 0;font-size:13px">📅 Retainer (SEO/GEO)</button>
+        <button class="t-btn"        id="ct-beides"   onclick="setCostType('beides')"   style="flex:1;padding:7px 0;font-size:13px">✦ Beides</button>
+      </div>
+
+      <!-- Fixum slider -->
+      <div id="row-fixum" style="padding:14px 16px 0">
+        <div class="roi-card">
+          <div class="roi-card-label">Einmalige Website-Investition (€)</div>
+          <div class="input-row" style="margin-top:8px">
+            <input type="range" id="w-fixum" min="500" max="30000" value="3000" step="250" oninput="calcW()">
+            <span class="val-badge" style="color:var(--red)" id="w-fixum-v">3.000 €</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Retainer slider -->
+      <div id="row-retainer" style="padding:14px 16px 0;display:none">
+        <div class="roi-card">
+          <div class="roi-card-label">Monatlicher Retainer – SEO/GEO (€)</div>
+          <div class="input-row" style="margin-top:8px">
+            <input type="range" id="w-retainer" min="200" max="5000" value="800" step="100" oninput="calcW()">
+            <span class="val-badge" style="color:var(--red)" id="w-retainer-v">800 €</span>
+          </div>
+        </div>
+      </div>
+
       <div class="roi-body">
         <div class="roi-card">
           <div class="roi-card-label">Monatlicher Mehrwert (brutto)</div>
           <div class="roi-card-val v-green" id="roi-mehr">–</div>
         </div>
         <div class="roi-card">
-          <div class="roi-card-label">Kosten GoldenWeb / Monat (€)</div>
-          <div class="input-row" style="margin-top:8px">
-            <input type="range" id="w-kosten" min="200" max="5000" value="800" step="100" oninput="calcW()">
-            <span class="val-badge" style="color:var(--red)" id="w-kosten-v">800 €</span>
-          </div>
+          <div class="roi-card-label">Gesamtkosten Jahr 1</div>
+          <div class="roi-card-val v-red" id="roi-kosten-j1">–</div>
         </div>
         <div class="roi-card">
-          <div class="roi-card-label">Netto-Gewinn pro Monat</div>
+          <div class="roi-card-label">Netto-Gewinn / Monat</div>
           <div class="roi-card-val" id="roi-netto">–</div>
         </div>
         <div class="roi-card">
@@ -513,7 +540,7 @@
         </div>
       </div>
       <div class="roi-bar-wrap">
-        <div class="roi-bar-label"><span>ROI-Verhältnis</span><span id="roi-ratio">–</span></div>
+        <div class="roi-bar-label"><span>ROI Jahr 1</span><span id="roi-ratio">–</span></div>
         <div class="roi-bar-track"><div class="roi-bar-fill" id="roi-bar" style="width:0%"></div></div>
       </div>
     </div>
@@ -589,49 +616,83 @@
     });
   }
 
+  let costType = 'fixum';
+
+  function setCostType(t){
+    costType = t;
+    ['fixum','retainer','beides'].forEach(x=>document.getElementById('ct-'+x).classList.toggle('active',x===t));
+    document.getElementById('row-fixum').style.display   = (t==='fixum'||t==='beides')   ? '' : 'none';
+    document.getElementById('row-retainer').style.display= (t==='retainer'||t==='beides') ? '' : 'none';
+    calcW();
+  }
+
   function calcW(){
-    const kunden=+document.getElementById('w-kunden').value;
-    const volumen=+document.getElementById('w-volumen').value;
-    const ausl=+document.getElementById('w-auslastung').value/100;
-    const kap=+document.getElementById('w-kapazitaet').value/100;
-    const neuk=+document.getElementById('w-neukunden').value;
-    const kosten=+document.getElementById('w-kosten').value;
+    const kunden  = +document.getElementById('w-kunden').value;
+    const volumen = +document.getElementById('w-volumen').value;
+    const ausl    = +document.getElementById('w-auslastung').value/100;
+    const kap     = +document.getElementById('w-kapazitaet').value/100;
+    const neuk    = +document.getElementById('w-neukunden').value;
+    const fixum   = +document.getElementById('w-fixum').value;
+    const retainer= +document.getElementById('w-retainer').value;
 
-    document.getElementById('w-kunden-v').textContent=kunden+' Kunden';
-    document.getElementById('w-volumen-v').textContent=volumen.toLocaleString('de-DE')+' €';
-    document.getElementById('w-auslastung-v').textContent=Math.round(ausl*100)+'%';
-    document.getElementById('w-kapazitaet-v').textContent=Math.round(kap*100)+'%';
-    document.getElementById('w-neukunden-v').textContent='+'+neuk+' Kunden';
-    document.getElementById('w-kosten-v').textContent=kosten.toLocaleString('de-DE')+' €';
+    document.getElementById('w-kunden-v').textContent   = kunden+' Kunden';
+    document.getElementById('w-volumen-v').textContent  = volumen.toLocaleString('de-DE')+' €';
+    document.getElementById('w-auslastung-v').textContent = Math.round(ausl*100)+'%';
+    document.getElementById('w-kapazitaet-v').textContent= Math.round(kap*100)+'%';
+    document.getElementById('w-neukunden-v').textContent = '+'+neuk+' Kunden';
+    document.getElementById('w-fixum-v').textContent    = fixum.toLocaleString('de-DE')+' €';
+    document.getElementById('w-retainer-v').textContent = retainer.toLocaleString('de-DE')+' €';
 
-    const umsatzM=kunden*volumen;
-    const mehrM=neuk*volumen;
-    const neuM=umsatzM+mehrM;
-    const nettoM=mehrM-kosten;
-    const amortWochen=kosten>0?Math.ceil(kosten/mehrM*4.33):0;
-    const roiPct=kosten>0?Math.round(mehrM/kosten*100):0;
+    const umsatzM = kunden * volumen;
+    const mehrM   = neuk * volumen;
+    const neuM    = umsatzM + mehrM;
 
-    document.getElementById('w-v1').textContent=fe(mul(umsatzM,wT));
-    document.getElementById('w-v2').textContent=fe(mul(neuM,wT));
-    document.getElementById('w-v3').textContent=fp(mul(mehrM,wT));
+    // Cost logic per type
+    const einmalig  = (costType==='fixum'||costType==='beides') ? fixum : 0;
+    const monatlich = (costType==='retainer'||costType==='beides') ? retainer : 0;
+    const kostenJ1  = einmalig + monatlich * 12;
+    const nettoM    = mehrM - monatlich;
+    // Amortization: months until cumulative gain covers all costs
+    let amortMonate = 0;
+    if(mehrM > 0){
+      let cumGain=0, cumCost=einmalig;
+      for(let i=1;i<=60;i++){
+        cumGain += mehrM;
+        cumCost += monatlich;
+        if(cumGain >= cumCost){ amortMonate=i; break; }
+      }
+      if(amortMonate===0) amortMonate=61;
+    }
+    const roiJ1 = kostenJ1 > 0 ? Math.round((mehrM*12 - kostenJ1) / kostenJ1 * 100) : 0;
 
-    document.getElementById('roi-mehr').textContent=fp(mehrM);
-    document.getElementById('roi-netto').textContent=(nettoM>=0?'+':'')+fe(Math.abs(nettoM));
-    document.getElementById('roi-netto').className='roi-card-val '+(nettoM>=0?'v-green':'v-red');
-    document.getElementById('roi-amort').textContent=amortWochen<=1?'sofort':amortWochen<=4?'Woche '+amortWochen:'Monat '+Math.ceil(amortWochen/4.33);
-    document.getElementById('roi-ratio').textContent=roiPct+'% ROI';
-    document.getElementById('roi-bar').style.width=Math.min(100,Math.round(roiPct/5))+'%';
+    document.getElementById('w-v1').textContent = fe(mul(umsatzM,wT));
+    document.getElementById('w-v2').textContent = fe(mul(neuM,wT));
+    document.getElementById('w-v3').textContent = fp(mul(mehrM,wT));
 
-    const suf=wT==='m'?'monatlich':wT==='y'?'pro Jahr':'in 3 Jahren';
-    document.getElementById('w-insight').innerHTML=
-      `<strong>${neuk} neue Kunden bringen ${fp(mul(mehrM,wT))} ${suf}.</strong> `+
-      `Nach Abzug der GoldenWeb-Kosten von ${fe(kosten)}/Monat bleibt ein Netto-Gewinn von `+
-      `<strong>${fe(Math.max(0,nettoM))}/Monat</strong>. Die Investition zahlt sich `+
-      `${amortWochen<=4?'bereits in der ersten Woche':'nach wenigen Wochen'} aus.`;
+    document.getElementById('roi-mehr').textContent     = fp(mehrM);
+    document.getElementById('roi-kosten-j1').textContent= fm(kostenJ1);
+    document.getElementById('roi-netto').textContent    = (nettoM>=0?'+':'')+fe(Math.abs(nettoM));
+    document.getElementById('roi-netto').className      = 'roi-card-val '+(nettoM>=0?'v-green':'v-red');
 
-    const tags=document.getElementById('w-tags');
+    const amortText = amortMonate===0?'sofort':amortMonate<=1?'Monat 1':amortMonate<=61?'Monat '+amortMonate:'> 5 Jahre';
+    document.getElementById('roi-amort').textContent = amortText;
+    document.getElementById('roi-ratio').textContent = roiJ1+'% ROI (Jahr 1)';
+    document.getElementById('roi-bar').style.width   = Math.min(100, Math.max(0, Math.round(roiJ1/3)))+'%';
+
+    const costDesc = costType==='fixum'
+      ? `Einmalinvestition von ${fe(einmalig)}`
+      : costType==='retainer'
+      ? `Monatlicher Retainer von ${fe(monatlich)}`
+      : `Website-Investition ${fe(einmalig)} + Retainer ${fe(monatlich)}/Monat`;
+
+    document.getElementById('w-insight').innerHTML =
+      `<strong>${neuk} neue Kunden bringen ${fp(mul(mehrM,wT))} ${wT==='m'?'monatlich':wT==='y'?'pro Jahr':'in 3 Jahren'}.</strong> `+
+      `${costDesc} – im ersten Jahr kostet dich GoldenWeb insgesamt ${fe(kostenJ1)}. `+
+      `Die Investition amortisiert sich ab <strong>${amortText}</strong>, danach ist jeder neue Auftrag reiner Gewinn.`;
+
+    const tags = document.getElementById('w-tags');
     tags.innerHTML='';
-    [`${kunden} Kunden/Monat`,`Ø ${volumen.toLocaleString('de-DE')} € Auftrag`,`+${neuk} Kunden durch uns`,`ROI: ${roiPct}%`].forEach(t=>{
+    [`${kunden} Kunden/Monat`,`Ø ${volumen.toLocaleString('de-DE')} € Auftrag`,`+${neuk} Kunden durch uns`,`ROI Jahr 1: ${roiJ1}%`].forEach(t=>{
       const s=document.createElement('span');s.className='tag';s.textContent=t;tags.appendChild(s);
     });
   }
